@@ -1,0 +1,56 @@
+<html layout:decorate="~{layout}">
+<div layout:fragment="content" class="container my-3">
+    <table class="table">
+        <thead class="table-dark">
+        <tr class="text-center">
+            <th>번호</th>
+            <th style="width: 50%">제목</th>
+            <th>글쓴이</th>
+            <th>날짜</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="question, loop : ${paging}" class="text-center">
+            <td th:text="${paging.getTotalElements - (paging.number * paging.size) - loop.index}"></td>
+            <td class="text-start">
+                <a th:href="@{|/question/detail/${question.id}|}" th:text="${question.title}"></a>
+                <span th:if="${question.answerList.size() > 0}"
+                      th:text="${question.answerList.size()}"
+                        class="text-danger small ms-2">
+                    0
+                </span>
+            </td>
+            <td>
+               <span th:if="${question.author != null}" th:text="${question.author.username}"></span>
+            </td>
+            <td th:text="${#temporals.format(question.createDate, 'yyyy-MM-dd HH:mm')}"></td>
+        </tr>
+        </tbody>
+    </table>
+    <div th:if="${!paging.isEmpty()}">
+        <nav aria-label="Page navigation example">
+            <ul class="pagination justify-content-center">
+                <li th:classappend="${!paging.hasPrevious()} ? 'disabled'" class="page-item">
+                    <a th:href="@{|/question/list?page=${paging.number - 1}|}" class="page-link" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                <li th:each="page : ${#numbers.sequence(0, paging.totalPages - 1)}"
+                    th:if="${page >= paging.number - 5 and page <= paging.number+5}"
+                    th:classappend="${page == paging.number} ? 'active'"
+                    class="page-item">
+                    <a th:href="@{|/question/list?page=${page}|}" th:text="${page}" class="page-link">1</a>
+                </li>
+                <li th:classappend="${!paging.hasNext()} ? 'disabled'" class="page-item">
+                    <a th:href="@{|/question/list?page=${paging.number + 1}|}" class="page-link" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+    <div>
+        <a th:href="@{/question/create}" class="btn btn-primary">질문등록</a>
+    </div>
+</div>
+</html>
